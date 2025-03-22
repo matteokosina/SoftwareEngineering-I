@@ -12,14 +12,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Get Latest Tag
+      - name: Get Latest Version from VERSION file or Tag
         id: get_version
         run: |
-          LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
-          if [[ -z "$LATEST_TAG" ]]; then
-            LATEST_TAG="1.0"
+          if [[ -f VERSION ]]; then
+            LATEST_VERSION=$(cat VERSION)
+          else
+            LATEST_VERSION=$(git tag --sort=-v:refname | head -n 1)
+            if [[ -z "$LATEST_VERSION" ]]; then
+              LATEST_VERSION="1.0"
+            fi
           fi
-          echo "latest_version=$LATEST_TAG" >> $GITHUB_ENV
+          echo "latest_version=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Determine New Version
         id: versioning
@@ -37,8 +41,17 @@ jobs:
           else
             NEW_VERSION=$MAJOR.$((MINOR+1))
           fi
+          echo "$NEW_VERSION" > VERSION
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
           echo "release_date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Commit and Push Updated VERSION file
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add VERSION
+          git commit -m "Update VERSION file to ${{ env.new_version }}"
+          git push
 
       - name: Create Tag
         run: |
