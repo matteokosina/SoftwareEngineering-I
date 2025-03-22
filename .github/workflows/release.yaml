@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -37,6 +38,7 @@ jobs:
             NEW_VERSION=$MAJOR.$((MINOR+1))
           fi
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "release_date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Create Tag
         run: |
@@ -47,5 +49,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.new_version }}
-          name: "Release ${{ env.new_version }} - $(date +'%Y-%m-%d')"
+          name: "Release ${{ env.new_version }} - ${{ env.release_date }}"
           files: main.pdf
