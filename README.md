@@ -49,5 +49,5 @@ Die geplante Software soll typische Geschäftsprozesse in einem Handwerksbetrieb
 - Rechnungserstellung und Dokumentenmanagement  
 
 ## 👥 Projektteam
-- Frank Erhardt
-- Simon Wehle
+- Leon Fertig
+- Matteo Kosina
