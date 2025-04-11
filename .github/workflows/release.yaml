@@ -8,25 +8,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Compile Typst Files
-        uses: ammar-ahmed22/compile-typst-action@v1
-        with:
-          source_paths: 'main.typ'
-          output_paths: 'main.pdf'
-      - name: Upload PDF file
-        uses: actions/upload-artifact@v4
-        with:
-          name: PDFs
-          path: |
-            main.pdf
-      - name: Get current date
-        id: date
-        run: echo "DATE=$(date +%Y-%m-%d-%H:%M)" >> $GITHUB_ENV
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: github.ref_type == 'tag'
-        with:
-          name: "${{ github.ref_name }} — ${{ env.DATE }}"
-          files: "*.pdf"
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - uses:  Jarivanbakel/typst-action@v3
+      with:
+        input_files: file1.typ
+    - name: Upload PDF file
+      uses: actions/upload-artifact@v3
+      with:
+        name: PDF
+        path: main.pdf
+    - name: Get current date
+      id: date
+      run: echo "DATE=$(date +%Y-%m-%d-%H:%M)" >> $GITHUB_ENV
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: github.ref_type == 'tag'
+      with:
+        name: "${{ github.ref_name }} — ${{ env.DATE }}"
+        files: "*.pdf"
